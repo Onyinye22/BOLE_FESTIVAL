@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_TOKEN = credentials('docker-hub-token')
-        DOCKER_IMAGE_NAME = "your-dockerhub-username/your-image-name"
+        DOCKER_HUB_TOKEN = credentials('Docker_PAT')
+        DOCKER_IMAGE_NAME = "estheronyinye/BoleFest"
         DOCKER_TAG = "latest"
     }
 
