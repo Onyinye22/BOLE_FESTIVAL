@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     // Push the Docker image to DockerHub
-                    docker.withRegistry('https://index.docker.io/v1/', 'DockerPat') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'Docker_PAT') {
                         docker.image("${env.DOCKER_IMAGE}:${env.BUILD_ID}").push()
                     }
                 }
