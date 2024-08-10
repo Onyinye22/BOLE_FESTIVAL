@@ -2,32 +2,34 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_TOKEN = credentials('Docker_PAT')
-        DOCKER_IMAGE_NAME = "estheronyinye/BoleFest"
-        DOCKER_TAG = "latest"
+        DOCKERHUB_CREDENTIALS = credentials('Docker_PAT')
+        DOCKER_IMAGE = 'estheronyinye/bolefest'
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the repository from GitHub
+                git url: 'https://github.com/Goodyoma/BOLE_FESTIVAL.git', branch: 'master'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ."
+                    // Build the Docker image using the Dockerfile in the repository
+                    docker.build("${env.DOCKER_IMAGE}:${env.BUILD_ID}")
                 }
             }
         }
 
-        stage('Log in to Docker Hub') {
+        stage('Push to DockerHub') {
             steps {
                 script {
-                    sh "echo ${DOCKER_HUB_TOKEN} | docker login -u ${DOCKER_HUB_USER} --password-stdin"
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
+                    // Push the Docker image to DockerHub
+                    docker.withRegistry('https://index.docker.io/v1/', 'DockerPat') {
+                        docker.image("${env.DOCKER_IMAGE}:${env.BUILD_ID}").push()
+                    }
                 }
             }
         }
@@ -35,15 +37,9 @@ pipeline {
 
     post {
         always {
-            script {
-                sh 'docker logout'
-            }
-        }
-        success {
-            echo 'Docker image built and pushed successfully.'
-        }
-        failure {
-            echo 'Failed to build or push the Docker image.'
+            // Clean up the workspace after the build
+            cleanWs()
         }
     }
 }
+
