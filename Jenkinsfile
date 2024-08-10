@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the repository from GitHub
-                git url: 'https://github.com/Goodyoma/BOLE_FESTIVAL.git', branch: 'master'
+                git url: 'https://github.com/Onyinye22/BOLE_FESTIVAL.git', branch: 'master'
             }
         }
 
